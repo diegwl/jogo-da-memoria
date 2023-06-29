@@ -2,12 +2,15 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
+#include <string.h>
 #include "unistd.h"
+#include <locale.h>
 
 #define ROWS 4
 #define COLS 4
 
-int i, j, k, l, matriz[ROWS][COLS] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}, pontos = 0, erros = 0, jogar_novamente = 1, acertos[8],contacertos, erros;
+int jogar = 1, i, j, k, l, matriz[ROWS][COLS] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}}, pontos = 0, erros = 0, acertos[8], contacertos;
+
 
 void gerarMatriz(int matriz[ROWS][COLS]) {
     int numero, vetor[8], col, row;
@@ -17,7 +20,7 @@ void gerarMatriz(int matriz[ROWS][COLS]) {
     	numero = rand() % 10;
     	
     	for (j=-1; j<=7; j++){
-		if (vetor[j] == numero){
+		if (vetor[j] == numero || numero == 0){
 			numero = rand() % 10;
 			j = -1;
 		}
@@ -58,6 +61,7 @@ void gerarMatriz(int matriz[ROWS][COLS]) {
 }
 
 void mostrarMatriz(){
+	printf("--- JOGO DA MEMORIA ---\n");
         for(
 		i=0; i<ROWS; i++){
     	    for(j=0; j<COLS; j++){
@@ -71,6 +75,7 @@ void mostrarMatriz(){
 
 void mostrar_matriz_escondida(){
     int caracter = 35;
+	system("cls"); 
     for (i=0; i<ROWS; i++){
         for (j=0; j<COLS; j++)
         {
@@ -84,16 +89,16 @@ void mostrar_matriz_escondida(){
                 }
             }
             if (acerto == 1){
-                printf(" %d ", num);
+                printf("\t%d", num);
             } else {
-                printf(" %c ", caracter);
+                printf("\t%c", caracter);
             }
         }
         printf("\n");
     }
 }
 
-bool verifica_acerto(num){
+bool verifica_acerto(int num){
 	for (i =0;i<=7;i++) {
 		if (num == acertos[i]) {
 			return false;
@@ -109,11 +114,11 @@ void verificar_jogada(){
 	
 	
 	
-	printf("Informe a linha e a coluna do primeiro número: ");
+	printf("Informe a linha e a coluna do primeiro nï¿½mero: ");
 	
 	scanf("%d %d",&linha1,&coluna1);
 	
-	printf("Informe a linha e a coluna do segundo número: ");
+	printf("Informe a linha e a coluna do segundo nï¿½mero: ");
 	
 	scanf("%d %d", &linha2, &coluna2);
 	
@@ -121,7 +126,8 @@ void verificar_jogada(){
 	
 	if (matriz[linha1][coluna1] == matriz[linha2][coluna2] && (coluna1 != coluna2 || linha1 != linha2) && valida_acerto) {
 	
-	printf("\a"); 
+	printf("\a");
+	printf("ParabÃ©ns, vocÃª acertou.\n");
 	contacertos++;
 	for (i =0;i<=7;i++){
 		if (acertos[i]==0){
@@ -133,9 +139,9 @@ void verificar_jogada(){
 	} 
 	else {
 	erros++;
-	printf("Os números não são iguais. Tente novamente.\n");
-	    
+	printf("Os nï¿½meros nï¿½o sï¿½o iguais. Tente novamente.\n"); 
 	}
+	sleep(5);
 }
 
 bool ganhou(){
@@ -143,7 +149,7 @@ bool ganhou(){
 }
 
 bool perdeu(){
-	return (erros>10);
+	return (erros==10);
 }
 
 void salvarPontuacao(int pontuacao) {
@@ -151,7 +157,7 @@ void salvarPontuacao(int pontuacao) {
     arquivo = fopen("pontuacao.txt", "w"); 
 
     if (arquivo == NULL) {
-        printf("pontuação.\n");
+        printf("pontuaï¿½ï¿½o.\n");
         return;
     }
 
@@ -159,25 +165,14 @@ void salvarPontuacao(int pontuacao) {
 
     fclose(arquivo); 
 }
-
-bool novoJogo(){
-    	char opcao;
-		fflush(stdin); 
-    	printf("Deseja jogar novamente S/N?");
-    	scanf("%c",&opcao);
-    	    if(opcao=='S' || opcao=='s'){
-    	   	return true;
-		    } 
-			else{
-				return false;
-			}
-	}
 	
 int main(){
-	bool jogar = true;
-	while(jogar){
-		bool ganhouVar = false;
-		bool perdeuVar = false;
+	setlocale(LC_ALL, "Portuguese");
+	bool ganhouVar, perdeuVar;
+	system ("color 0D");
+	while(jogar == 1){
+		ganhouVar = false;
+		perdeuVar = false;
 		gerarMatriz(matriz);
 		mostrarMatriz();
 		while(!ganhouVar && !perdeuVar){
@@ -186,7 +181,58 @@ int main(){
 			perdeuVar = perdeu();
 			ganhouVar = ganhou();
 		}
+		if(perdeuVar == true){
+			system("cls");
+			printf("----------------------------------------\n");
+			printf("  ________\n");
+			printf(" /  _____ \\\n");
+			printf("|  |     |  |\n");
+			printf("|  | RIP |  |\n");
+			printf("|  |_____|  |\n");
+			printf("|__________|\n");
+			printf("   Game Over\n----------------------------------------");
+			sleep(5);
+
+		} else if (ganhouVar == true){
+			system("cls");
+			printf("         VOCE GANHOU PARABENS!!!\n");
+			printf("----------------------------------------\n");
+			printf("          .-=========-.               \n");
+			printf("          \\'-=======-'/               \n");
+			printf("          _|   .=.   |_               \n");
+			printf("         ((|  {{1}}  |))              \n");
+			printf("          \\|   /|\\   |/               \n");
+			printf("           \\__ '`' __/                \n");
+			printf("             _`) (`_                  \n");
+			printf("           _/_______\\_                \n");
+			printf("          /___________\\\n----------------------------------------");
+			sleep(5);
+		}
+		system("cls");
 		salvarPontuacao(contacertos*10);
-		jogar = novoJogo();
+		printf("Sua pontuaÃ§Ã£o foi salva! vocÃª fez %d pontos!\n", contacertos*10);
+		sleep(3);
+		system("cls");
+		printf("Digite 1 para jogar novamente ou 0 para sair:\n");
+		scanf("%d", &jogar);
+		system("cls");
+		
+		for(
+		i=0; i<ROWS; i++){
+    	    for(j=0; j<COLS; j++){
+    	     matriz[i][j] = 0;
+		    }
+		 printf("\n");
+	    } 
+
+		pontos = 0;
+		erros = 0;
+		
+		for (i =0;i<=7;i++){
+			acertos[i] = 0;
+		}
+
+		contacertos = 0;
 	}
+	return 0;
 }
